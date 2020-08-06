@@ -1,0 +1,376 @@
+<html>
+	<head>
+		<style>
+			canvas{
+				   border  : 1px solid black;
+				  }
+		</style>
+		 <canvas id="canvas" width="1400" height = "650"></canvas>
+	</head>
+	<body>
+		<script>
+		
+			// global variables 
+			var player = null;
+			var ball = null;
+			var balls = new Array();
+			var num,i;
+			var velocityX,velocityY;
+			var randomX,randomY;
+			var sign;
+			var score = 0;
+			var color;
+			
+			// global constants 
+			const canvas = document.getElementById("canvas");
+			const context = canvas.getContext('2d');
+			const rect = canvas.getBoundingClientRect();
+			
+			
+			// class that creates ball 
+		
+			class Ball{
+		
+				constructor(centerX,centerY,color,velocityX,velocityY,radius,merged){
+					this._centerX=centerX;
+					this._centerY=centerY;
+					this._color=color;
+					this._velocityX=velocityX;
+					this._velocityY=velocityY;
+					this._radius=radius;
+					this._merged=merged;
+				}
+			
+				set centerX(newCenterX){
+					this._centerX=newCenterX;
+			
+				}
+			
+				get centerX(){
+					return this._centerX;
+				
+				}
+			
+				set centerY(newCenterY){
+					this._centerY=newCenterY;
+			
+				}
+			
+				get centerY(){
+					return this._centerY;
+			
+				}
+			
+				set color(newColor){
+					this._color=newColor;
+			
+				}
+			
+				get color(){
+					return this._color;
+			
+				}
+				
+				set velocityX(newVelocityX){
+					this._velocityX=newVelocityX;
+			
+				}
+			
+				get velocityX(){
+					return this._velocityX;
+				
+				}
+			
+				set velocityY(newVelocityY){
+					this._velocityY=newVelocityY;
+			
+				}
+			
+				get velocityY(){
+					return this._velocityY;
+				
+				}
+				
+				set radius(newRadius){
+					this._radius=newRadius;
+			
+				}
+			
+				get radius(){
+					return this._radius;
+				
+				}
+				
+				set merged(newMerged){
+					this._merged=newMerged;
+			
+				}
+			
+				get merged(){
+					return this._merged;
+				
+				}
+		
+			}
+			
+			// move player with the mouse 
+			canvas.addEventListener("mousemove",function(event){
+			
+				player.centerX=event.clientX-rect.left;
+				player.centerY=event.clientY-rect.top;
+				
+			
+				for(i=0;i<=balls.length-1;i++){
+					
+					// case when player has touched another ball on screen
+					if((player.centerX-balls[i].centerX)**2 + (player.centerY-balls[i].centerY)**2 <=(player.radius+balls[i].radius)**2){
+						
+						// case when the ball is black
+						if(balls[i].color == "black"){
+						
+							location.reload();
+					
+						}
+					
+						// case when the ball is not black
+						else if(player.color==balls[i].color && !balls[i].merged && balls[i].color!="black"){
+					
+							balls[i].merged = true;
+							player.radius++;
+							score++;
+						}
+					}
+				}
+			});
+			
+			// change player's color
+			document.addEventListener("keydown",function(event){
+			
+				if(event.keyCode == 82){
+					
+					player.color="red";
+				
+				}
+				
+				else if(event.keyCode == 66){
+					
+					player.color="blue";
+				
+				}
+				
+				else if(event.keyCode == 71){
+					
+					player.color="green";
+				
+				}
+				
+				else if(event.keyCode == 89){
+					
+					player.color="yellow";
+				
+				}
+				
+				else if(event.keyCode == 79){
+					
+					player.color="orange";
+				
+				}
+				
+				else if(event.keyCode == 80){
+					
+					player.color="purple";
+				
+				}
+				
+				else if(event.keyCode == 77){
+					
+					player.color="magenta";
+				
+				}
+			});
+			
+			// main function 
+			function init(){
+			
+				player = new Ball(700,325,"red",0,0,5,false);
+				
+				// create new balls every sixth of a second
+				setInterval(createBall,167);
+				
+				// update screen every 10 milliseconds 
+				setInterval(updateScreen,10);
+				
+				// delete balls that have gone off the screen
+				setInterval(deleteBalls,10);
+			}
+			
+			function createBall(){
+				
+				// generate random number from 1-92 indicating which color the ball is 
+				num = Math.floor(Math.random() * 92) + 1;
+				
+				// case when ball is red 
+				if(num<=12){
+					
+					color="red";
+				
+				}
+				
+				// case when ball is blue
+				else if(num>=13 && num<=24){					
+					color="blue";
+				
+				}
+				
+				// case when ball is green
+				else if(num>=25 && num<=36){
+					
+					color="green";
+				
+				}
+				
+				// case when ball is yellow
+				else if(num>=37 && num<=48){
+					
+					color="yellow";
+				
+				}
+				
+				// case when ball is orange
+				else if(num>=49 && num<=60){
+					
+					color="orange";
+				
+				}
+				
+				// case when ball is purple
+				else if(num>=61 && num<=72){
+					
+					color="purple";
+				
+				}
+				
+				// case when ball is magenta
+				else if(num>=73 && num<=84){
+					
+					color="magenta";
+				
+				}
+				
+				// case when the ball is black 
+				else if(num>=85){
+					
+					color="black";
+				
+				}
+				
+				// generate random number from 5-1395 indicating where to start
+				randomX = Math.floor(Math.random() * 1395)+5; 
+				
+				// generate random number from 5-645 indicating where to start 
+				randomY = Math.floor(Math.random() * 645)+5; 
+				
+				// set the sign for the velocity
+				sign = Math.floor(Math.random()*2)+1;
+				
+				// generate random number indicating velocity in X direction
+				
+				// positive velocity
+				if(sign == 1){
+				
+					// generate random number indicating velocity in X direction
+					velocityX = Math.random()*300; 
+				}
+				
+				// negative velocity
+				else if(sign == 2){
+					
+					velocityX = -1*Math.random()*300; 
+				
+				}
+				
+				// generate random number indicating velocity in Y direction
+				
+				// positive velocity
+				if(sign == 1){
+				
+					// generate random number indicating velocity in X direction
+					velocityY = Math.random()*300;  
+				}
+				
+				// negative velocity
+				else if(sign == 2){
+					
+					velocityY = -1*Math.random()*300; 
+				
+				}
+				
+				ball = new Ball(randomX,randomY,color,velocityX,velocityY,5,false);
+				balls.push(ball);
+			}
+			
+			function updateScreen(){
+				
+				// clear screen 
+				context.clearRect(0,0,canvas.width,canvas.height);
+				
+				// draw all balls 
+				for(i=0;i<=balls.length-1;i++){
+					
+					// only draw if not merged 
+					if(!balls[i].merged){
+					
+						context.fillStyle=balls[i].color;
+				
+						context.beginPath();
+						context.arc(balls[i].centerX,balls[i].centerY,balls[i].radius,0,2*Math.PI);
+						context.fill();
+					
+						// update ball position 
+						balls[i].centerX+=0.01*balls[i].velocityX;
+						balls[i].centerY+=0.01*balls[i].velocityY;
+						
+					}
+				}
+				
+				// redraw player 
+				context.fillStyle=player.color;
+				
+				context.beginPath();
+				context.arc(player.centerX,player.centerY,player.radius,0,2*Math.PI);
+				context.fill();
+				
+				// print score 
+				context.fillStyle="black";
+				context.font = "20px Arial";
+				context.fillText("Score:".concat(score.toString()), 10, 25);
+				
+			}
+			
+			function deleteBalls(){
+				
+				for(i=0;i<=balls.length-1;i++){
+					
+					// case when ball has exited the screen
+					if( balls[i].centerX < -10 || balls[i].centerX > 1410 || balls[i].centerY < -10 || balls[i].centerY > 660){
+					
+						delete balls[i].centerX;
+						delete balls[i].centerY;
+						delete balls[i].color;
+						delete balls[i].velocityX;
+						delete balls[i].velocityY;
+						delete balls[i].radius;
+						delete balls[i].merged;
+					}
+				
+				}
+			
+			
+			}
+			
+			// start game when window loads 
+			window.onload=init;
+			
+		</script>
+	</body>
+</html>
