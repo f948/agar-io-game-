@@ -2,6 +2,8 @@
 
 Description-A twist on the classic agar io game in which a player will have to move a cell and catch other moving cells to grow in size, but in order to grow when catching another cell the two cells must be the same color. Hitting a black cell will reset the game and the player's score.
 
+Video demonstration avaliable at https://www.youtube.com/watch?v=C7Y10OA8J5Y
+
 # Required
 
 A web browser to run the html file.
